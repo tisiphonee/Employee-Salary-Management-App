@@ -29,8 +29,8 @@ vector<Employee *> read_employees_file()
     ifstream file("employees.csv");
     string line, field;
     vector<Employee *> employees;
-    // Skip header
-    getline(file, line);
+
+    getline(file, line); // Skip header
     while (getline(file, line))
     {
         stringstream ss(line);
