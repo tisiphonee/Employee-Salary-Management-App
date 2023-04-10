@@ -13,7 +13,8 @@ public:
     {
         if (start < 0 || start > 24 || end < 0 || end > 24)
         {
-            std::cerr << "Invalid start or end time: " << start << ", " << end << "\n";
+            cerr << "Invalid start or end time: " << start << ", " << end << "\n";
+            abort();
         }
         else
         {
@@ -48,6 +49,7 @@ public:
         if (day < 1 || day > 30)
         {
             cerr << "Invalid day: " << day << "\n";
+            abort();
         }
         else
         {
