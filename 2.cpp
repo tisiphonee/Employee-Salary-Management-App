@@ -26,7 +26,7 @@ private:
 
 vector<Employee *> read_employees_file()
 {
-    ifstream file("./input/employees.csv");
+    ifstream file("employees.csv");
     string line, level, name, field;
     int id, age;
     vector<Employee *> employees;
