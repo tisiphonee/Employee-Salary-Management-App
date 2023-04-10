@@ -1,7 +1,2 @@
 # income-app
-
-salam
-mmd
-
-
-YAYYYYYYYYYYYYYY!!!!!
+Back TO Normal
