@@ -1,0 +1,6 @@
+# Ignore files VS Code
+.vscode/
+
+*.exe
+
+temp*.cpp
