@@ -12,10 +12,10 @@ public:
     Employee(int id, string name, int age, string level)
         : id(id), name(name), age(age), level(level) {}
 
-    int getId() const { return id; }
-    string getName() const { return name; }
-    int getAge() const { return age; }
-    string getLevel() const { return level; }
+    int get_id() const { return id; }
+    string get_name() const { return name; }
+    int get_age() const { return age; }
+    string get_level() const { return level; }
 
 private:
     int id;
