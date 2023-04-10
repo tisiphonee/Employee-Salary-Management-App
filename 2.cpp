@@ -27,8 +27,7 @@ private:
 vector<Employee *> read_employees_file()
 {
     ifstream file("employees.csv");
-    string line, level, name, field;
-    int id, age;
+    string line, field;
     vector<Employee *> employees;
     // Skip header
     getline(file, line);
@@ -37,13 +36,13 @@ vector<Employee *> read_employees_file()
         stringstream ss(line);
 
         getline(ss, field, ',');
-        id = stoi(field);
+        int id = stoi(field);
         getline(ss, field, ',');
-        name = field;
+        string name = field;
         getline(ss, field, ',');
-        age = stoi(field);
+        int age = stoi(field);
         getline(ss, field);
-        level = field;
+        string level = field;
 
         employees.push_back(new Employee(id, name, age, level));
     }
