@@ -13,7 +13,7 @@ public:
     {
         if (start < 0 || start > 24 || end < 0 || end > 24)
         {
-            cerr << "Invalid start or end time: " << start << ", " << end << "\n";
+            error("Invalid start or end time: " + to_string(start) + ", " + to_string(end) + "\n");
         }
         else
         {
@@ -21,18 +21,9 @@ public:
             end_time = end;
         }
     }
-    int get_start_time()
-    {
-        return start_time;
-    }
-    int get_end_time()
-    {
-        return end_time;
-    }
-    int get_lenght()
-    {
-        return end_time - start_time;
-    }
+    int get_start_time() { return start_time; }
+    int get_end_time() { return end_time; }
+    int get_lenght() { return end_time - start_time; }
 
 private:
     int start_time;
@@ -47,7 +38,7 @@ public:
     {
         if (day < 1 || day > 30)
         {
-            cerr << "Invalid day: " << day << "\n";
+            error("Invalid day: " + to_string(day) + "\n");
         }
         else
         {
@@ -157,7 +148,11 @@ vector<Working_Hour *> read_working_hour_file()
     file.close();
     return working_hour;
 }
-
+void error(string message)
+{
+    cerr << message << endl;
+    abort();
+}
 int main()
 {
     read_working_hour_file();
