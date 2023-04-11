@@ -49,11 +49,7 @@ public:
         for (int i = 0; i < salery_configs.size(); i++)
             if (salery_configs[i]->get_level() == _level)
             {
-                salery_configs[i]->base_salary = _base_salary;
-                salery_configs[i]->salary_per_hour = _salary_per_hour;
-                salery_configs[i]->salary_per_extra_hour = _salary_per_extra_hour;
-                salery_configs[i]->official_working_hours = _official_working_hours;
-                salery_configs[i]->tax_percentage = _tax_percentage;
+                cout << "OK" << endl;
                 return;
             }
         cout << "INVALID_LEVEL" << endl;
@@ -100,6 +96,7 @@ vector<Salary_Config *> read_salary_file()
 int main()
 {
     vector<Salary_Config *> configs = read_salary_file();
-
+    configs[3]->get_level_config("expert");
+    configs[3]->set_level_config("expert", 1000, 900, 800, 6, 6);
     configs[3]->get_level_config("expert");
 }
