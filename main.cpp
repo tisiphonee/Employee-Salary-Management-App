@@ -148,11 +148,13 @@ vector<Working_Hour *> read_working_hour_file()
     file.close();
     return working_hour;
 }
+
 void error(string message)
 {
     cerr << message << endl;
     abort();
 }
+
 int main()
 {
     read_working_hour_file();
