@@ -41,6 +41,23 @@ public:
             }
         cout << "INVALID_LEVEL" << endl;
     }
+    void set_level_config(string _level, int _base_salary,
+                          int _salary_per_hour, int _salary_per_extra_hour,
+                          int _official_working_hours,
+                          int _tax_percentage)
+    {
+        for (int i = 0; i < salery_configs.size(); i++)
+            if (salery_configs[i]->get_level() == _level)
+            {
+                salery_configs[i]->base_salary = _base_salary;
+                salery_configs[i]->salary_per_hour = _salary_per_hour;
+                salery_configs[i]->salary_per_extra_hour = _salary_per_extra_hour;
+                salery_configs[i]->official_working_hours = _official_working_hours;
+                salery_configs[i]->tax_percentage = _tax_percentage;
+                return;
+            }
+        cout << "INVALID_LEVEL" << endl;
+    }
 
 private:
     string level;
@@ -83,5 +100,6 @@ vector<Salary_Config *> read_salary_file()
 int main()
 {
     vector<Salary_Config *> configs = read_salary_file();
+
     configs[3]->get_level_config("expert");
 }
