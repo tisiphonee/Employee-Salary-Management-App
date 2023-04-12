@@ -8,6 +8,51 @@ using namespace std;
 
 void error(string message);
 
+class Team
+{
+public:
+    Team(int team_id,
+         int team_head_id,
+         vector<int> member_ids,
+         int bonus_min_working_hours,
+         float bonus_working_hours_max_variance) : team_id(team_id), team_head_id(team_head_id),
+                                                   member_ids(member_ids), bonus_min_working_hours(bonus_min_working_hours),
+                                                   bonus_working_hours_max_variance(bonus_working_hours_max_variance)
+    {
+    }
+
+    int get_team_id() { return team_id; }
+    int get_team_head_id() { return team_head_id; }
+    vector<int> get_member_ids() { return member_ids; }
+    int get_bonus_min_working_hours() { return bonus_min_working_hours; }
+    float get_bonus_working_hours_max_variancse() { return bonus_working_hours_max_variance; }
+
+private:
+    int team_id;
+    int team_head_id;
+    vector<int> member_ids;
+    int bonus_min_working_hours;
+    float bonus_working_hours_max_variance;
+};
+
+class Employee
+{
+public:
+    Employee(int id, string name, int age, string level)
+        : id(id), name(name), age(age), level(level) {}
+
+    int get_id() const { return id; }
+    string get_name() const { return name; }
+    int get_age() const { return age; }
+    string get_level() const { return level; }
+
+private:
+    int id;
+    string name;
+    int age;
+    string level;
+};
+
 class Working_Interval
 {
 public:
@@ -75,143 +120,6 @@ private:
     vector<Working_Interval *> working_intervals;
 };
 
-class Employee
-{
-public:
-    Employee(int id, string name, int age, string level)
-        : id(id), name(name), age(age), level(level) {}
-
-    int get_id() const { return id; }
-    string get_name() const { return name; }
-    int get_age() const { return age; }
-    string get_level() const { return level; }
-
-private:
-    int id;
-    string name;
-    int age;
-    string level;
-};
-
-vector<Employee *> read_employees_file()
-{
-    ifstream file("employees.csv");
-    string line, field;
-    vector<Employee *> employees;
-
-    getline(file, line);
-    while (getline(file, line))
-    {
-        stringstream ss(line);
-
-        getline(ss, field, ',');
-        int id = stoi(field);
-        getline(ss, field, ',');
-        string name = field;
-        getline(ss, field, ',');
-        int age = stoi(field);
-        getline(ss, field);
-        string level = field;
-
-        employees.push_back(new Employee(id, name, age, level));
-    }
-    file.close();
-
-    return employees;
-}
-
-vector<Working_Hour *> read_working_hour_file()
-{
-    ifstream file("working_hours.csv");
-    string line, field;
-    vector<Working_Hour *> working_hour;
-
-    getline(file, line);
-    while (getline(file, line))
-    {
-        stringstream ss(line);
-        getline(ss, field, ',');
-        int id = stoi(field);
-        getline(ss, field, ',');
-        int day = stoi(field);
-        Working_Hour *emp_working_hour = new Working_Hour(id, day);
-
-        while (getline(ss, field, '-'))
-        {
-            int start = stoi(field);
-            getline(ss, field, ' ');
-            int end = stoi(field);
-            Working_Interval *interval = new Working_Interval(start, end);
-            emp_working_hour->add_working_hour(interval);
-        }
-        working_hour.push_back(emp_working_hour);
-    }
-
-    file.close();
-    return working_hour;
-}
-class Team
-{
-
-public:
-    Team(int team_id, int team_head_id, vector<int> member_ids, int bonus_min_working_hours, int bonus_working_hours_max_variance);
-    int get_team_id() { return team_id; }
-    int get_team_head_id() { return team_head_id; }
-    vector<int> get_member_ids() { return member_ids; }
-    int get_bonus_min_working_hours() { return bonus_min_working_hours; }
-    int get_bonus_working_hours_max_variancse() { return bonus_working_hours_max_variance; }
-
-private:
-    int team_id;
-    int team_head_id;
-    vector<int> member_ids;
-    int bonus_min_working_hours;
-    int bonus_working_hours_max_variance;
-};
-
-vector<Team *> read_teams_file()
-{
-    ifstream file("teams.csv");
-    int position_in_string = 0;
-    int team_id, team_head_id, bonus_min_working_hours, bonus_working_hours_max_variance;
-    vector<int> member_ids;
-    string line;
-
-    vector<Team *> teams;
-    getline(file, line);
-
-    while (getline(file, line))
-    {
-        stringstream ss(line);
-        string field;
-
-        getline(ss, field, ',');
-        team_id = stoi(field);
-
-        getline(ss, field, ',');
-        team_head_id = stoi(field);
-
-        getline(ss, field, ',');
-        while (position_in_string != field.size())
-        {
-            int $_position;
-            string member_id;
-            $_position = field.find('$');
-            member_id = field.substr(position_in_string, $_position);
-            member_ids.push_back(stoi(member_id));
-        }
-
-        getline(ss, field, ',');
-        bonus_min_working_hours = stoi(field);
-
-        getline(ss, field, ',');
-        bonus_working_hours_max_variance = stoi(field);
-        teams.push_back(new Team(team_id, team_head_id, member_ids, bonus_min_working_hours, bonus_working_hours_max_variance));
-    }
-
-    file.close();
-    return teams;
-}
 class Salary_Config
 {
 
@@ -275,6 +183,91 @@ private:
     int tax_percentage;
     vector<Salary_Config *> salery_configs;
 };
+vector<Employee *> read_employees_file()
+{
+    ifstream file("employees.csv");
+    string line, field;
+    vector<Employee *> employees;
+
+    getline(file, line);
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+
+        getline(ss, field, ',');
+        int id = stoi(field);
+        getline(ss, field, ',');
+        string name = field;
+        getline(ss, field, ',');
+        int age = stoi(field);
+        getline(ss, field);
+        string level = field;
+
+        employees.push_back(new Employee(id, name, age, level));
+    }
+    file.close();
+
+    return employees;
+}
+
+vector<Working_Hour *> read_working_hour_file()
+{
+    ifstream file("working_hours.csv");
+    string line, field;
+    vector<Working_Hour *> working_hour;
+
+    getline(file, line);
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+        getline(ss, field, ',');
+        int id = stoi(field);
+        getline(ss, field, ',');
+        int day = stoi(field);
+        Working_Hour *emp_working_hour = new Working_Hour(id, day);
+
+        while (getline(ss, field, '-'))
+        {
+            int start = stoi(field);
+            getline(ss, field, ' ');
+            int end = stoi(field);
+            Working_Interval *interval = new Working_Interval(start, end);
+            emp_working_hour->add_working_hour(interval);
+        }
+        working_hour.push_back(emp_working_hour);
+    }
+
+    file.close();
+    return working_hour;
+}
+vector<Team *> read_teams_file()
+{
+    ifstream file("teams.csv");
+    string line, id, team_id, team_head_id, bonus_min_working_hours, bonus_working_hours_max_variance;
+    vector<Team *> teams;
+
+    getline(file, line);
+    while (getline(file, line))
+    {
+        vector<int> member_ids;
+        stringstream ss(line);
+        getline(ss, team_id, ',');
+        getline(ss, team_head_id, ',');
+        while (getline(ss, id, '$'))
+        {
+            member_ids.push_back(stoi(id));
+        }
+        stringstream _ss(id);
+        getline(_ss, id, ',');
+        getline(_ss, bonus_min_working_hours, ',');
+        getline(_ss, bonus_working_hours_max_variance, ',');
+        teams.push_back(new Team(stoi(team_id), stoi(team_head_id), member_ids, stoi(bonus_min_working_hours),
+                                 stof(bonus_working_hours_max_variance)));
+    }
+
+    file.close();
+    return teams;
+}
 
 vector<Salary_Config *> read_salary_file()
 {
