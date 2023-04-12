@@ -305,8 +305,8 @@ void error(string message)
 
 int main()
 {
-    read_working_hour_file();
-    read_teams_file();
+    vector<Working_Hour *> read_working_hour_file();
+    vector<Team *> read_teams_file();
     vector<Salary_Config *> configs = read_salary_file();
     configs[3]->get_level_config("expert");
     configs[3]->set_level_config("expert", 1000, 900, 800, 6, 6);
