@@ -230,7 +230,6 @@ vector<Working_Hour *> read_working_hour_file()
         position_of_underscore = field.find('-');
         start_hour = field.substr(0, position_of_underscore);
         end_hour = field.substr(position_of_underscore + 1);
-        Working_Interval *interval = new Working_Interval(stoi(start_hour), stoi(end_hour));
         working_hour.push_back(emp_working_hour);
     }
 

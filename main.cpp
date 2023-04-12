@@ -78,7 +78,6 @@ private:
 
 class Working_Hour
 {
-
 public:
     Working_Hour(int id, int day)
     {
@@ -89,33 +88,23 @@ public:
         else
         {
             employee_id = id;
-            num_days = day;
+            attended_days.push_back(day);
         }
     }
 
     int get_emp_id() { return employee_id; }
-    int get_num_days() { return num_days; }
+    vector<int> get_attended_days() { return attended_days; }
 
-    vector<Working_Interval *> get_working_hours() { return working_intervals; }
+    vector<Working_Interval *> get_working_intervals() { return working_intervals; }
 
-    void add_working_hour(Working_Interval *interval)
+    void add_time_period(Working_Interval *interval)
     {
         working_intervals.push_back(interval);
     }
 
-    int get_total_hour()
-    {
-        int total_lenght = 0;
-        for (int i = 0; i < working_intervals.size(); i++)
-        {
-            total_lenght += working_intervals[i]->get_lenght();
-        }
-        return total_lenght;
-    }
-
 private:
     int employee_id;
-    int num_days;
+    vector<int> attended_days;
     vector<Working_Interval *> working_intervals;
 };
 
@@ -205,28 +194,37 @@ vector<Employee *> read_employees_file()
 vector<Working_Hour *> read_working_hour_file()
 {
     ifstream file("working_hours.csv");
-    string line, field;
+    string line, id, day, start, end;
     vector<Working_Hour *> working_hour;
 
     getline(file, line);
     while (getline(file, line))
     {
+        bool already_exist = false;
         stringstream ss(line);
-        getline(ss, field, ',');
-        int id = stoi(field);
-        getline(ss, field, ',');
-        int day = stoi(field);
-        Working_Hour *emp_working_hour = new Working_Hour(id, day);
+        getline(ss, id, ',');
+        getline(ss, day, ',');
+        getline(ss, start, '-');
+        getline(ss, end);
+        Working_Interval *time_period = new Working_Interval(stoi(start), stoi(end));
 
-        while (getline(ss, field, '-'))
+        if (working_hour.size() != 0)
         {
-            int start = stoi(field);
-            getline(ss, field, ' ');
-            int end = stoi(field);
-            Working_Interval *interval = new Working_Interval(start, end);
-            emp_working_hour->add_working_hour(interval);
+            for (int i = 0; i < working_hour.size(); i++)
+            {
+                if (working_hour[i]->get_emp_id() == stoi(id))
+                {
+                    already_exist = true;
+                    working_hour[i]->add_time_period(time_period);
+                }
+            }
         }
-        working_hour.push_back(emp_working_hour);
+        if (!already_exist)
+        {
+            Working_Hour *new_emp = new Working_Hour(stoi(id), stoi(day));
+            new_emp->add_time_period(time_period);
+            working_hour.push_back(new_emp);
+        }
     }
 
     file.close();
@@ -329,9 +327,6 @@ int main()
             string level;
             cin >> level;
             Salary_Report.show_salary_config(level);
-        }
-        else if
-        {
         }
     }
     return 0;
