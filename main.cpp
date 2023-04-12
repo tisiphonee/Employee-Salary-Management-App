@@ -100,7 +100,7 @@ class Working_Hour
 public:
     Working_Hour(int id, int day, Working_Interval *working_period)
     {
-        if (day < 1 || day > 30)
+        if (is_day_valid(day))
         {
             error("Invalid day: " + to_string(day) + "\n");
         }
@@ -123,6 +123,20 @@ public:
             attended_days.push_back(new Day(day, working_period));
         }
     }
+    void delete_day(int day)
+    {
+        for (int i = 0; i < attended_days.size(); i++)
+        {
+            if (attended_days[i]->get_day() == day)
+            {
+                attended_days[i].erase(i);
+                cout << "ok" << endl;
+                return;
+            }
+        }
+        cout << "This day doesn't exist in the employee's record." << endl;
+    }
+    bool is_day_valid(int day) { (day < 1 || day > 30); }
     int get_emp_id() { return employee_id; }
     vector<Day *> get_attended_days() { return attended_days; }
 
