@@ -6,6 +6,8 @@
 
 using namespace std;
 
+void error(string message);
+
 class Working_Interval
 {
 public:
@@ -191,6 +193,11 @@ public:
         for (int i = 0; i < salery_configs.size(); i++)
             if (salery_configs[i]->get_level() == _level)
             {
+                salery_configs[i]->base_salary = _base_salary;
+                salery_configs[i]->salary_per_hour = _salary_per_hour;
+                salery_configs[i]->salary_per_extra_hour = _salary_per_extra_hour;
+                salery_configs[i]->official_working_hours = _official_working_hours;
+                salery_configs[i]->tax_percentage = _tax_percentage;
                 cout << "OK" << endl;
                 return;
             }
