@@ -77,74 +77,47 @@ private:
     int end_time;
 };
 
-class Day
-{
-public:
-    Day(int _day, Working_Interval *working_period)
-    {
-        day = _day;
-        working_periods.push_back(working_period);
-    }
-    void add_work_period(Working_Interval *working_period)
-    {
-        working_periods.push_back(working_period);
-    }
-    int get_day() { return day; }
-
-private:
-    int day;
-    vector<Working_Interval *> working_periods;
-};
-
 class Working_Hour
 {
+
 public:
-    Working_Hour(int id, int day, Working_Interval *working_period)
+    Working_Hour(int id, int day)
     {
-        if (is_day_valid(day))
+        if (day < 1 || day > 30)
         {
             error("Invalid day: " + to_string(day) + "\n");
         }
         else
         {
             employee_id = id;
-            add_new_time(day, working_period);
+            num_days = day;
         }
     }
-    void add_new_time(int day, Working_Interval *working_period)
-    {
-        bool is_exsist_day = false;
-        for (int i = 0; i < attended_days.size(); i++)
-            if (attended_days[i]->get_day() == day)
-            {
-                attended_days[i]->add_work_period(working_period);
-                is_exsist_day = true;
-            }
-        if (!is_exsist_day)
-        {
-            attended_days.push_back(new Day(day, working_period));
-        }
-    }
-    void delete_day(int day)
-    {
-        for (int i = 0; i < attended_days.size(); i++)
-        {
-            if (attended_days[i]->get_day() == day)
-            {
-                attended_days.erase(attended_days.begin() + i);
-                cout << "OK" << endl;
-                return;
-            }
-        }
-        cout << "INVALID_ARGUMENTS" << endl;
-    }
-    bool is_day_valid(int day) { return (day < 1 || day > 30); }
+
     int get_emp_id() { return employee_id; }
-    vector<Day *> get_attended_days() { return attended_days; }
+    int get_num_days() { return num_days; }
+
+    vector<Working_Interval *> get_working_hours() { return working_intervals; }
+
+    void add_working_hour(Working_Interval *interval)
+    {
+        working_intervals.push_back(interval);
+    }
+
+    int get_total_hour()
+    {
+        int total_lenght = 0;
+        for (int i = 0; i < working_intervals.size(); i++)
+        {
+            total_lenght += working_intervals[i]->get_lenght();
+        }
+        return total_lenght;
+    }
 
 private:
     int employee_id;
-    vector<Day *> attended_days;
+    int num_days;
+    vector<Working_Interval *> working_intervals;
 };
 
 class Salary_Config
@@ -167,25 +140,38 @@ public:
     {
         salery_configs = _salery_configs;
     }
-    void print_salary_config()
+
+    void get_level_config(string dest_level)
     {
-        cout << "Base Salary: " << base_salary << endl;
-        cout << "Salary Per Hour: " << salary_per_hour << endl;
-        cout << "Salary Per Extra Hour: " << salary_per_extra_hour << endl;
-        cout << "Official Working Hours: " << official_working_hours << endl;
-        cout << "Tax: " << tax_percentage << "%" << endl;
+        for (int i = 0; i < salery_configs.size(); i++)
+            if (salery_configs[i]->get_level() == dest_level)
+            {
+                cout << "Base Salary: " << salery_configs[i]->base_salary << endl;
+                cout << "Salary Per Hour: " << salery_configs[i]->salary_per_hour << endl;
+                cout << "Salary Per Extra Hour: " << salery_configs[i]->salary_per_extra_hour << endl;
+                cout << "Official Working Hours: " << salery_configs[i]->official_working_hours << endl;
+                cout << "Tax: " << salery_configs[i]->tax_percentage << "%" << endl;
+                return;
+            }
+        cout << "INVALID_LEVEL" << endl;
     }
-    void update_level_config(string _level, string _base_salary,
-                             string _salary_per_hour, string _salary_per_extra_hour,
-                             string _official_working_hours,
-                             string _tax_percentage)
+    void set_level_config(string _level, int _base_salary,
+                          int _salary_per_hour, int _salary_per_extra_hour,
+                          int _official_working_hours,
+                          int _tax_percentage)
     {
-        base_salary = _base_salary == "-" ? base_salary : stoi(_base_salary);
-        salary_per_hour = _salary_per_hour == "-" ? salary_per_hour : stoi(_salary_per_hour);
-        salary_per_extra_hour = _salary_per_extra_hour == "-" ? salary_per_extra_hour : stoi(_salary_per_extra_hour);
-        official_working_hours = _official_working_hours == "-" ? official_working_hours : stoi(_official_working_hours);
-        tax_percentage = _tax_percentage == "-" ? tax_percentage : stoi(_tax_percentage);
-        cout << "OK" << endl;
+        for (int i = 0; i < salery_configs.size(); i++)
+            if (salery_configs[i]->get_level() == _level)
+            {
+                salery_configs[i]->base_salary = _base_salary;
+                salery_configs[i]->salary_per_hour = _salary_per_hour;
+                salery_configs[i]->salary_per_extra_hour = _salary_per_extra_hour;
+                salery_configs[i]->official_working_hours = _official_working_hours;
+                salery_configs[i]->tax_percentage = _tax_percentage;
+                cout << "OK" << endl;
+                return;
+            }
+        cout << "INVALID_LEVEL" << endl;
     }
 
 private:
@@ -227,40 +213,30 @@ vector<Employee *> read_employees_file()
 vector<Working_Hour *> read_working_hour_file()
 {
     ifstream file("working_hours.csv");
-    string line, id, day, start, end;
+    string line, field, start_hour, end_hour;
     vector<Working_Hour *> working_hour;
 
     getline(file, line);
     while (getline(file, line))
     {
-        bool already_exist = false;
         stringstream ss(line);
-        getline(ss, id, ',');
-        getline(ss, day, ',');
-        getline(ss, start, '-');
-        getline(ss, end);
-        Working_Interval *time_period = new Working_Interval(stoi(start), stoi(end));
-
-        if (!working_hour.empty())
-        {
-            for (int i = 0; i < working_hour.size(); i++)
-            {
-                if (working_hour[i]->get_emp_id() == stoi(id))
-                {
-                    already_exist = true;
-                    working_hour[i]->add_new_time(stoi(day), time_period);
-                }
-            }
-        }
-        if (!already_exist)
-        {
-            working_hour.push_back(new Working_Hour(stoi(id), stoi(day), time_period));
-        }
+        getline(ss, field, ',');
+        int id = stoi(field);
+        getline(ss, field, ',');
+        int day = stoi(field);
+        Working_Hour *emp_working_hour = new Working_Hour(id, day);
+        getline(ss, field, ',');
+        int position_of_underscore;
+        position_of_underscore = field.find('-');
+        start_hour = field.substr(0, position_of_underscore);
+        end_hour = field.substr(position_of_underscore + 1);
+        working_hour.push_back(emp_working_hour);
     }
 
     file.close();
     return working_hour;
 }
+
 vector<Team *> read_teams_file()
 {
     ifstream file("teams.csv");
@@ -321,53 +297,7 @@ vector<Salary_Config *> read_salary_file()
 
     return configs;
 }
-class Salary_Report
-{
-public:
-    void show_salary_config(string dest_level)
-    {
-        for (int i = 0; i < salary_configs.size(); i++)
-            if (salary_configs[i]->get_level() == dest_level)
-            {
-                salary_configs[i]->print_salary_config();
-                return;
-            }
-        cout << "INVALID_LEVEL" << endl;
-    }
-    void update_salary_config(string _level, string _base_salary,
-                              string _salary_per_hour, string _salary_per_extra_hour,
-                              string _official_working_hours,
-                              string _tax_percentage)
-    {
-        for (int i = 0; i < salary_configs.size(); i++)
-            if (salary_configs[i]->get_level() == _level)
-            {
-                salary_configs[i]->update_level_config(_level, _base_salary, _salary_per_hour,
-                                                       _salary_per_extra_hour, _official_working_hours,
-                                                       _tax_percentage);
-                return;
-            }
-        cout << "INVALID_LEVEL" << endl;
-    }
-    void delete_working_hours(int id, int day)
-    {
-        for (Working_Hour *emp_woking_hour : working_hours)
-        {
-            if (emp_woking_hour->get_emp_id() == id)
-            {
-                emp_woking_hour->delete_day(day);
-                return;
-            }
-        }
-        cout << "EMPLOYEE_NOT_FOUND" << endl;
-    }
 
-private:
-    vector<Employee *> employess = read_employees_file();
-    vector<Team *> teams = read_teams_file();
-    vector<Salary_Config *> salary_configs = read_salary_file();
-    vector<Working_Hour *> working_hours = read_working_hour_file();
-};
 void error(string message)
 {
     cerr << message << endl;
@@ -376,30 +306,12 @@ void error(string message)
 
 int main()
 {
-    Salary_Report Salary_Report;
-    string command;
-    // while (cin >> command)
-    while (true)
-    {
-        cin >> command;
-        string level, base_salary, salary_per_hour, salary_per_extra_hour, official_working_hours, tax_percentage;
-        if (command == "show_salary_config")
-        {
-            cin >> level;
-            Salary_Report.show_salary_config(level);
-        }
-        else if (command == "update_salary_config")
-        {
-            cin >> level >> base_salary >> salary_per_hour >> salary_per_extra_hour >> official_working_hours >> tax_percentage;
-            Salary_Report.update_salary_config(level, base_salary, salary_per_hour,
-                                               salary_per_extra_hour, official_working_hours, tax_percentage);
-        }
-        else if (command == "delete_working_hours")
-        {
-            int id, day;
-            cin >> id >> day;
-            Salary_Report.delete_working_hours(id, day);
-        }
-    }
+    vector<Working_Hour *> working_hours = read_working_hour_file();
+    vector<Team *> teams = read_teams_file();
+    vector<Salary_Config *> configs = read_salary_file();
+    configs[3]->get_level_config("expert");
+    configs[3]->set_level_config("expert", 1000, 900, 800, 6, 6);
+    configs[3]->get_level_config("expert");
+
     return 0;
 }
