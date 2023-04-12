@@ -79,9 +79,9 @@ private:
 class Day
 {
 public:
-    Day(int day, Working_Interval *working_period)
+    Day(int _day, Working_Interval *working_period)
     {
-        day = day;
+        day = _day;
         working_periods.push_back(working_period);
     }
     void add_work_period(Working_Interval *working_period)
@@ -120,8 +120,6 @@ public:
             }
         if (!is_exsist_day)
         {
-            if (!attended_days.empty())
-                day = day;
             attended_days.push_back(new Day(day, working_period));
         }
     }
