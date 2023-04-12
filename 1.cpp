@@ -59,8 +59,7 @@ vector<Team *> read_teams_file()
         getline(_ss, id, ',');
         getline(_ss, bonus_min_working_hours, ',');
         getline(_ss, bonus_working_hours_max_variance, ',');
-        teams.push_back(new Team(stoi(team_id), stoi(team_head_id),
-                                 member_ids, stoi(bonus_min_working_hours),
+        teams.push_back(new Team(stoi(team_id), stoi(team_head_id), member_ids, stoi(bonus_min_working_hours),
                                  stof(bonus_working_hours_max_variance)));
     }
 
