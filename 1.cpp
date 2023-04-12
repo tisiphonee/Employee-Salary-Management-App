@@ -25,11 +25,6 @@ private:
     int binus_working_hours_max_variancse;
 };
 
-Team::Team(int team_id, int team_head_id, vector<int> member_ids, int binus_min_working_hours, int binus_working_hours_max_variancse)
-{
-    read_teams_file();
-}
-
 vector<Team *> read_teams_file()
 {
     ifstream file("teams.csv");
@@ -72,10 +67,6 @@ vector<Team *> read_teams_file()
 
     file.close();
     return teams;
-}
-
-int main()
-{
 }
 
 int main()
