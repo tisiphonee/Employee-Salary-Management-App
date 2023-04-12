@@ -243,7 +243,7 @@ vector<Working_Hour *> read_working_hour_file()
 vector<Team *> read_teams_file()
 {
     ifstream file("teams.csv");
-    string line, id, team_id, team_head_id, bonus_min_working_hours, bonus_working_hours_max_variance;
+    string line, field, id, team_id, team_head_id, bonus_min_working_hours, bonus_working_hours_max_variance;
     vector<Team *> teams;
 
     getline(file, line);
@@ -253,14 +253,18 @@ vector<Team *> read_teams_file()
         stringstream ss(line);
         getline(ss, team_id, ',');
         getline(ss, team_head_id, ',');
-        while (getline(ss, id, '$'))
+        getline(ss, field, ',');
+        size_t $_position = 0;
+        while ($_position != string::npos)
         {
-            member_ids.push_back(stoi(id));
+            string member_id;
+            $_position = field.find('$');
+            member_id = field.substr(0, $_position);
+            field = field.substr($_position + 1);
+            member_ids.push_back(stoi(member_id));
         }
-        stringstream _ss(id);
-        getline(_ss, id, ',');
-        getline(_ss, bonus_min_working_hours, ',');
-        getline(_ss, bonus_working_hours_max_variance, ',');
+        getline(ss, bonus_min_working_hours, ',');
+        getline(ss, bonus_working_hours_max_variance, ',');
         teams.push_back(new Team(stoi(team_id), stoi(team_head_id), member_ids, stoi(bonus_min_working_hours),
                                  stof(bonus_working_hours_max_variance)));
     }
@@ -305,10 +309,8 @@ void error(string message)
 
 int main()
 {
-    vector<Employee *> employees = read_employees_file();
-    vector<Working_Hour *>
-    read_working_hour_file();
-    vector<Team *> read_teams_file();
+    vector<Working_Hour *> working_hours = read_working_hour_file();
+    vector<Team *> teams = read_teams_file();
     vector<Salary_Config *> configs = read_salary_file();
     configs[3]->get_level_config("expert");
     configs[3]->set_level_config("expert", 1000, 900, 800, 6, 6);
