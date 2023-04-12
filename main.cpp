@@ -154,26 +154,26 @@ class Team
 {
 
 public:
-    Team(int team_id, int team_head_id, vector<int> member_ids, int binus_min_working_hours, int binus_working_hours_max_variancse);
+    Team(int team_id, int team_head_id, vector<int> member_ids, int bonus_min_working_hours, int bonus_working_hours_max_variance);
     int get_team_id() { return team_id; }
     int get_team_head_id() { return team_head_id; }
     vector<int> get_member_ids() { return member_ids; }
-    int get_binus_min_working_hours() { return binus_min_working_hours; }
-    int get_binus_working_hours_max_variancse() { binus_working_hours_max_variancse; }
+    int get_bonus_min_working_hours() { return bonus_min_working_hours; }
+    int get_bonus_working_hours_max_variancse() { return bonus_working_hours_max_variance; }
 
 private:
     int team_id;
     int team_head_id;
     vector<int> member_ids;
-    int binus_min_working_hours;
-    int binus_working_hours_max_variancse;
+    int bonus_min_working_hours;
+    int bonus_working_hours_max_variance;
 };
 
 vector<Team *> read_teams_file()
 {
     ifstream file("teams.csv");
     int position_in_string = 0;
-    int team_id, team_head_id, binus_min_working_hours, binus_working_hours_max_variancse;
+    int team_id, team_head_id, bonus_min_working_hours, bonus_working_hours_max_variance;
     vector<int> member_ids;
     string line;
 
@@ -202,11 +202,11 @@ vector<Team *> read_teams_file()
         }
 
         getline(ss, field, ',');
-        binus_min_working_hours = stoi(field);
+        bonus_min_working_hours = stoi(field);
 
         getline(ss, field, ',');
-        binus_working_hours_max_variancse = stoi(field);
-        teams.push_back(new Team(team_id, team_head_id, member_ids, binus_min_working_hours, binus_working_hours_max_variancse));
+        bonus_working_hours_max_variance = stoi(field);
+        teams.push_back(new Team(team_id, team_head_id, member_ids, bonus_min_working_hours, bonus_working_hours_max_variance));
     }
 
     file.close();
