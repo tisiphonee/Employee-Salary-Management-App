@@ -305,7 +305,9 @@ void error(string message)
 
 int main()
 {
-    vector<Working_Hour *> read_working_hour_file();
+    vector<Employee *> employees = read_employees_file();
+    vector<Working_Hour *>
+    read_working_hour_file();
     vector<Team *> read_teams_file();
     vector<Salary_Config *> configs = read_salary_file();
     configs[3]->get_level_config("expert");
