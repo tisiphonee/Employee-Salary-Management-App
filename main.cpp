@@ -58,7 +58,7 @@ class Working_Interval
 public:
     Working_Interval(int start, int end)
     {
-        if (!is_valid_interval)
+        if (!is_valid_interval(start, end))
         {
             error("Invalid start or end time: " + to_string(start) + ", " + to_string(end) + "\n");
         }
@@ -112,9 +112,8 @@ public:
                 cout << "OK" << endl;
                 return true;
             }
-            else
-                return false;
         }
+        return false;
     }
     int get_day() { return day; }
 
