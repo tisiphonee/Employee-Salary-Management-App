@@ -76,10 +76,29 @@ private:
     int end_time;
 };
 
+class Day
+{
+public:
+    Day(int day, Working_Interval *working_period)
+    {
+        day = day;
+        working_periods.push_back(working_period);
+    }
+    void add_work_period(Working_Interval *working_period)
+    {
+        working_periods.push_back(working_period);
+    }
+    int get_day() { return day; }
+
+private:
+    int day;
+    vector<Working_Interval *> working_periods;
+};
+
 class Working_Hour
 {
 public:
-    Working_Hour(int id, int day)
+    Working_Hour(int id, int day, Working_Interval *working_period)
     {
         if (day < 1 || day > 30)
         {
@@ -88,24 +107,28 @@ public:
         else
         {
             employee_id = id;
-            attended_days.push_back(day);
+            add_new_time(day, working_period);
         }
     }
-
-    int get_emp_id() { return employee_id; }
-    vector<int> get_attended_days() { return attended_days; }
-
-    vector<Working_Interval *> get_working_intervals() { return working_intervals; }
-
-    void add_time_period(Working_Interval *interval)
+    void add_new_time(int day, Working_Interval *working_period)
     {
-        working_intervals.push_back(interval);
+        bool is_exsist_day = false;
+        for (int i = 0; i < attended_days.size(); i++)
+            if (attended_days[i]->get_day() == day)
+            {
+                attended_days[i]->add_work_period(working_period);
+            }
+        if (!is_exsist_day)
+        {
+            attended_days.push_back(new Day(day, working_period));
+        }
     }
+    int get_emp_id() { return employee_id; }
+    vector<Day *> get_attended_days() { return attended_days; }
 
 private:
     int employee_id;
-    vector<int> attended_days;
-    vector<Working_Interval *> working_intervals;
+    vector<Day *> attended_days;
 };
 
 class Salary_Config
@@ -215,15 +238,13 @@ vector<Working_Hour *> read_working_hour_file()
                 if (working_hour[i]->get_emp_id() == stoi(id))
                 {
                     already_exist = true;
-                    working_hour[i]->add_time_period(time_period);
+                    working_hour[i]->add_new_time(stoi(day), time_period);
                 }
             }
         }
         if (!already_exist)
         {
-            Working_Hour *new_emp = new Working_Hour(stoi(id), stoi(day));
-            new_emp->add_time_period(time_period);
-            working_hour.push_back(new_emp);
+            working_hour.push_back(new Working_Hour(stoi(id), stoi(day), time_period));
         }
     }
 
