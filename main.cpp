@@ -355,7 +355,6 @@ int main()
     {
         cin >> command;
         string level, base_salary, salary_per_hour, salary_per_extra_hour, official_working_hours, tax_percentage;
-
         if (command == "show_salary_config")
         {
             cin >> level;
@@ -366,6 +365,11 @@ int main()
             cin >> level >> base_salary >> salary_per_hour >> salary_per_extra_hour >> official_working_hours >> tax_percentage;
             Salary_Report.update_salary_config(level, base_salary, salary_per_hour,
                                                salary_per_extra_hour, official_working_hours, tax_percentage);
+        }
+        else if (command == "delete_working_hours")
+        {
+            int id, day;
+            cin >> id >> day;
         }
     }
     return 0;
