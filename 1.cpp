@@ -5,64 +5,63 @@
 #include <string>
 
 using namespace std;
-
 class Team
 {
 
 public:
-    Team(int team_id, int team_head_id, vector<int> member_ids, int binus_min_working_hours, int binus_working_hours_max_variancse);
+    Team(int team_id,
+         int team_head_id,
+         vector<int> member_ids,
+         int bonus_min_working_hours,
+         float bonus_working_hours_max_variance) :
+
+                                                   team_id(team_id),
+                                                   team_head_id(team_head_id),
+                                                   member_ids(member_ids),
+                                                   bonus_min_working_hours(bonus_min_working_hours),
+                                                   bonus_working_hours_max_variance(bonus_working_hours_max_variance)
+    {
+    }
+
     int get_team_id() { return team_id; }
     int get_team_head_id() { return team_head_id; }
     vector<int> get_member_ids() { return member_ids; }
-    int get_bonus_min_working_hours() { return binus_min_working_hours; }
-    int get_bonus_working_hours_max_variancse() { return binus_working_hours_max_variancse; }
+    int get_bonus_min_working_hours() { return bonus_min_working_hours; }
+    int get_bonus_working_hours_max_variancse() { return bonus_working_hours_max_variance; }
 
 private:
     int team_id;
     int team_head_id;
     vector<int> member_ids;
-    int binus_min_working_hours;
-    int binus_working_hours_max_variancse;
+    int bonus_min_working_hours;
+    float bonus_working_hours_max_variance;
 };
 
 vector<Team *> read_teams_file()
 {
     ifstream file("teams.csv");
-    int position_in_string = 0;
-    int team_id, team_head_id, binus_min_working_hours, binus_working_hours_max_variancse;
-    vector<int> member_ids;
-    string line;
+    string line, id, team_id, team_head_id, bonus_min_working_hours, bonus_working_hours_max_variance;
 
     vector<Team *> teams;
     getline(file, line);
 
     while (getline(file, line))
     {
+        vector<int> member_ids;
         stringstream ss(line);
-        string field;
-
-        getline(ss, field, ',');
-        team_id = stoi(field);
-
-        getline(ss, field, ',');
-        team_head_id = stoi(field);
-
-        getline(ss, field, ',');
-        while (position_in_string != field.size())
+        getline(ss, team_id, ',');
+        getline(ss, team_head_id, ',');
+        while (getline(ss, id, '$'))
         {
-            int $_position;
-            string member_id;
-            $_position = field.find('$');
-            member_id = field.substr(position_in_string, $_position);
-            member_ids.push_back(stoi(member_id));
+            member_ids.push_back(stoi(id));
         }
-
-        getline(ss, field, ',');
-        binus_min_working_hours = stoi(field);
-
-        getline(ss, field, ',');
-        binus_working_hours_max_variancse = stoi(field);
-        teams.push_back(new Team(team_id, team_head_id, member_ids, binus_min_working_hours, binus_working_hours_max_variancse));
+        stringstream _ss(id);
+        getline(_ss, id, ',');
+        getline(_ss, bonus_min_working_hours, ',');
+        getline(_ss, bonus_working_hours_max_variance, ',');
+        teams.push_back(new Team(stoi(team_id), stoi(team_head_id),
+                                 member_ids, stoi(bonus_min_working_hours),
+                                 stof(bonus_working_hours_max_variance)));
     }
 
     file.close();
