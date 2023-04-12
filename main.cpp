@@ -99,7 +99,7 @@ vector<Employee *> read_employees_file()
     string line, field;
     vector<Employee *> employees;
 
-    getline(file, line); // Skip header
+    getline(file, line);
     while (getline(file, line))
     {
         stringstream ss(line);
@@ -126,7 +126,7 @@ vector<Working_Hour *> read_working_hour_file()
     string line, field;
     vector<Working_Hour *> working_hour;
 
-    getline(file, line); // Skip header
+    getline(file, line);
     while (getline(file, line))
     {
         stringstream ss(line);
@@ -220,7 +220,7 @@ vector<Salary_Config *> read_salary_file()
     string line, field;
     vector<Salary_Config *> configs;
 
-    getline(file, line); // Skip header
+    getline(file, line);
     while (getline(file, line))
     {
         string level, base_salary, salary_per_hour, salary_per_extra_hour, official_working_hours, tax_percentage;
