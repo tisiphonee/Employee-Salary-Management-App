@@ -216,6 +216,7 @@ vector<Working_Hour *> read_working_hour_file()
     string line, field, start_hour, end_hour;
     vector<Working_Hour *> working_hour;
 
+    getline(file, line);
     while (getline(file, line))
     {
         stringstream ss(line);

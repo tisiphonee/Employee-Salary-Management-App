@@ -5,7 +5,6 @@
 #include <string>
 
 using namespace std;
-
 void error(string message);
 
 class Team
@@ -140,20 +139,13 @@ public:
     {
         salery_configs = _salery_configs;
     }
-
-    void get_level_config(string dest_level)
+    void print_salary_config()
     {
-        for (int i = 0; i < salery_configs.size(); i++)
-            if (salery_configs[i]->get_level() == dest_level)
-            {
-                cout << "Base Salary: " << salery_configs[i]->base_salary << endl;
-                cout << "Salary Per Hour: " << salery_configs[i]->salary_per_hour << endl;
-                cout << "Salary Per Extra Hour: " << salery_configs[i]->salary_per_extra_hour << endl;
-                cout << "Official Working Hours: " << salery_configs[i]->official_working_hours << endl;
-                cout << "Tax: " << salery_configs[i]->tax_percentage << "%" << endl;
-                return;
-            }
-        cout << "INVALID_LEVEL" << endl;
+        cout << "Base Salary: " << base_salary << endl;
+        cout << "Salary Per Hour: " << salary_per_hour << endl;
+        cout << "Salary Per Extra Hour: " << salary_per_extra_hour << endl;
+        cout << "Official Working Hours: " << official_working_hours << endl;
+        cout << "Tax: " << tax_percentage << "%" << endl;
     }
     void set_level_config(string _level, int _base_salary,
                           int _salary_per_hour, int _salary_per_extra_hour,
@@ -300,7 +292,26 @@ vector<Salary_Config *> read_salary_file()
 
     return configs;
 }
+class Salary_Report
+{
+public:
+    void show_salary_config(string dest_level)
+    {
+        for (int i = 0; i < salary_configs.size(); i++)
+            if (salary_configs[i]->get_level() == dest_level)
+            {
+                salary_configs[i]->print_salary_config();
+                return;
+            }
+        cout << "INVALID_LEVEL" << endl;
+    }
 
+private:
+    vector<Employee *> employess = read_employees_file();
+    vector<Team *> teams = read_teams_file();
+    vector<Salary_Config *> salary_configs = read_salary_file();
+    vector<Working_Hour *> working_hours = read_working_hour_file();
+};
 void error(string message)
 {
     cerr << message << endl;
@@ -309,12 +320,19 @@ void error(string message)
 
 int main()
 {
-    vector<Working_Hour *> working_hours = read_working_hour_file();
-    vector<Team *> teams = read_teams_file();
-    vector<Salary_Config *> configs = read_salary_file();
-    configs[3]->get_level_config("expert");
-    configs[3]->set_level_config("expert", 1000, 900, 800, 6, 6);
-    configs[3]->get_level_config("expert");
-
+    Salary_Report Salary_Report;
+    string command;
+    while (cin >> command)
+    {
+        if (command == "show_salary_config")
+        {
+            string level;
+            cin >> level;
+            Salary_Report.show_salary_config(level);
+        }
+        else if
+        {
+        }
+    }
     return 0;
 }
