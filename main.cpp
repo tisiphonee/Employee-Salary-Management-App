@@ -58,7 +58,7 @@ class Working_Interval
 public:
     Working_Interval(int start, int end)
     {
-        if (start < 0 || start > 24 || end < 0 || end > 24)
+        if (!is_valid_interval)
         {
             error("Invalid start or end time: " + to_string(start) + ", " + to_string(end) + "\n");
         }
@@ -68,9 +68,27 @@ public:
             end_time = end;
         }
     }
+    bool is_time_conflicting(Working_Interval new_interval)
+    {
+        return ();
+    }
+
+    bool time_conflict(int new_start_time, int new_end_time) const
+    {
+        if (new_start_time >= start_time && new_start_time < end_time)
+            return true;
+        else if (start_time >= new_start_time && start_time < new_end_time)
+            return true;
+        else if (start_time < new_end_time && new_start_time < end_time)
+            return true;
+        return false;
+    }
+
     int get_start_time() { return start_time; }
     int get_end_time() { return end_time; }
     int get_lenght() { return end_time - start_time; }
+
+    bool is_valid_interval(int start, int end) { return (start < 0 || start > 24 || end < 0 || end > 24 || start < end); }
 
 private:
     int start_time;
@@ -101,7 +119,7 @@ class Working_Hour
 public:
     Working_Hour(int id, int day, Working_Interval *working_period)
     {
-        if (is_day_valid(day))
+        if (is_valid_day(day))
         {
             error("Invalid day: " + to_string(day) + "\n");
         }
@@ -138,7 +156,9 @@ public:
         }
         cout << "INVALID_ARGUMENTS" << endl;
     }
-    bool is_day_valid(int day) { return (day < 1 || day > 30); }
+
+    bool is_valid_day(int day) { return (day < 1 || day > 30); }
+
     int get_emp_id() { return employee_id; }
     vector<Day *> get_attended_days() { return attended_days; }
 
@@ -361,6 +381,25 @@ public:
         }
         cout << "EMPLOYEE_NOT_FOUND" << endl;
     }
+    void add_working_hours(int id, int day, int start, int end)
+    {
+        if (not_valid_day(day) || not_valid_interval(start, end))
+        {
+            cout << "INVALID_ARGUMENTS" << end;
+            return;
+        }
+        for (Working_Hour *emp_woking_hour : working_hours)
+        {
+            if (emp_woking_hour->get_emp_id() == id)
+            {
+                emp_woking_hour.return;
+            }
+        }
+        cout << "EMPLOYEE_NOT_FOUND" << endl;
+    }
+
+    bool not_valid_day(int day) { return (day < 1 || day > 30); }
+    bool not_valid_interval(int start, int end) { return (start < 0 || start > 24 || end < 0 || end > 24 || start < end); }
 
 private:
     vector<Employee *> employess = read_employees_file();
@@ -399,6 +438,10 @@ int main()
             int id, day;
             cin >> id >> day;
             Salary_Report.delete_working_hours(id, day);
+        }
+        else if (command == "add_working_hours")
+        {
+            int id, day, start, end;
         }
     }
     return 0;
