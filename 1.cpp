@@ -15,7 +15,7 @@ public:
     int get_team_head_id() { return team_head_id; }
     vector<int> get_member_ids() { return member_ids; }
     int get_bonus_min_working_hours() { return binus_min_working_hours; }
-    int get_bonus_working_hours_max_variancse() { binus_working_hours_max_variancse; }
+    int get_bonus_working_hours_max_variancse() { return binus_working_hours_max_variancse; }
 
 private:
     int team_id;
