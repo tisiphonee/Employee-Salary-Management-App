@@ -79,8 +79,6 @@ public:
             return true;
         else if (start_time >= new_start_time && start_time < new_end_time)
             return true;
-        else if (start_time < new_end_time && new_start_time < end_time)
-            return true;
         return false;
     }
 
