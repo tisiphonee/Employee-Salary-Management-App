@@ -41,10 +41,9 @@ vector<Team *> read_teams_file()
 {
     ifstream file("teams.csv");
     string line, id, team_id, team_head_id, bonus_min_working_hours, bonus_working_hours_max_variance;
-
     vector<Team *> teams;
-    getline(file, line);
 
+    getline(file, line);
     while (getline(file, line))
     {
         vector<int> member_ids;
