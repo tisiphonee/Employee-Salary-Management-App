@@ -27,7 +27,7 @@ public:
     int get_team_head_id() { return team_head_id; }
     vector<int> get_member_ids() { return member_ids; }
     int get_bonus_min_working_hours() { return bonus_min_working_hours; }
-    int get_bonus_working_hours_max_variancse() { return bonus_working_hours_max_variance; }
+    float get_bonus_working_hours_max_variancse() { return bonus_working_hours_max_variance; }
 
 private:
     int team_id;
