@@ -5,6 +5,7 @@
 #include <string>
 
 using namespace std;
+
 void error(string message);
 
 class Team
@@ -117,6 +118,7 @@ public:
             if (attended_days[i]->get_day() == day)
             {
                 attended_days[i]->add_work_period(working_period);
+                is_exsist_day = true;
             }
         if (!is_exsist_day)
         {
@@ -129,14 +131,14 @@ public:
         {
             if (attended_days[i]->get_day() == day)
             {
-                attended_days[i].erase(i);
-                cout << "ok" << endl;
+                attended_days.erase(attended_days.begin() + i);
+                cout << "OK" << endl;
                 return;
             }
         }
-        cout << "This day doesn't exist in the employee's record." << endl;
+        cout << "INVALID_ARGUMENTS" << endl;
     }
-    bool is_day_valid(int day) { (day < 1 || day > 30); }
+    bool is_day_valid(int day) { return (day < 1 || day > 30); }
     int get_emp_id() { return employee_id; }
     vector<Day *> get_attended_days() { return attended_days; }
 
@@ -347,6 +349,18 @@ public:
             }
         cout << "INVALID_LEVEL" << endl;
     }
+    void delete_working_hours(int id, int day)
+    {
+        for (Working_Hour *emp_woking_hour : working_hours)
+        {
+            if (emp_woking_hour->get_emp_id() == id)
+            {
+                emp_woking_hour->delete_day(day);
+                return;
+            }
+        }
+        cout << "EMPLOYEE_NOT_FOUND" << endl;
+    }
 
 private:
     vector<Employee *> employess = read_employees_file();
@@ -384,6 +398,7 @@ int main()
         {
             int id, day;
             cin >> id >> day;
+            Salary_Report.delete_working_hours(id, day);
         }
     }
     return 0;
