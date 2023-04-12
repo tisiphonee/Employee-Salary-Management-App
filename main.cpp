@@ -120,6 +120,8 @@ public:
             }
         if (!is_exsist_day)
         {
+            if (!attended_days.empty())
+                day = day;
             attended_days.push_back(new Day(day, working_period));
         }
     }
@@ -231,7 +233,7 @@ vector<Working_Hour *> read_working_hour_file()
         getline(ss, end);
         Working_Interval *time_period = new Working_Interval(stoi(start), stoi(end));
 
-        if (working_hour.size() != 0)
+        if (!working_hour.empty())
         {
             for (int i = 0; i < working_hour.size(); i++)
             {
