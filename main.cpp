@@ -68,10 +68,6 @@ public:
             end_time = end;
         }
     }
-    bool is_time_conflicting(Working_Interval new_interval)
-    {
-        return ();
-    }
 
     bool time_conflict(int new_start_time, int new_end_time) const
     {
@@ -104,6 +100,21 @@ public:
     void add_work_period(Working_Interval *working_period)
     {
         working_periods.push_back(working_period);
+    }
+    bool insert_periods(int new_start, int new_end)
+    {
+        for (Working_Interval *current_period : working_periods)
+        {
+            bool is_valid_ins = current_period->time_conflict(new_start, new_end);
+            if (is_valid_ins)
+            {
+                working_periods.push_back(new Working_Interval(new_start, new_end));
+                cout << "OK" << endl;
+                return true;
+            }
+            else
+                return false;
+        }
     }
     int get_day() { return day; }
 
@@ -154,9 +165,32 @@ public:
         }
         cout << "INVALID_ARGUMENTS" << endl;
     }
+    void insert_new_time(int day_index, int new_start, int new_end)
+    {
+        Day *current_day = find_day_by_number(day_index);
+        if (current_day != NULL)
+        {
+            bool is_inserted = current_day->insert_periods(new_start, new_end);
+            if (!is_inserted)
+                cout << "INVALID_INTERVAL" << endl;
+        }
+        else
+        {
+            attended_days.push_back(new Day(day_index, new Working_Interval(new_start, new_end)));
+        }
+    }
+
+    Day *find_day_by_number(int day)
+    {
+        for (Day *current_day : attended_days)
+        {
+            if (current_day->get_day() == day)
+                return current_day;
+        }
+        return NULL;
+    }
 
     bool is_valid_day(int day) { return (day < 1 || day > 30); }
-
     int get_emp_id() { return employee_id; }
     vector<Day *> get_attended_days() { return attended_days; }
 
@@ -379,18 +413,18 @@ public:
         }
         cout << "EMPLOYEE_NOT_FOUND" << endl;
     }
-    void add_working_hours(int id, int day, int start, int end)
+    void add_working_hours(int id, int day, int new_start, int new_end)
     {
-        if (not_valid_day(day) || not_valid_interval(start, end))
+        if (not_valid_day(day) || not_valid_interval(new_start, new_end))
         {
-            cout << "INVALID_ARGUMENTS" << end;
+            cout << "INVALID_ARGUMENTS" << endl;
             return;
         }
         for (Working_Hour *emp_woking_hour : working_hours)
         {
             if (emp_woking_hour->get_emp_id() == id)
             {
-                emp_woking_hour.return;
+                emp_woking_hour->insert_new_time(day, new_start, new_end);
             }
         }
         cout << "EMPLOYEE_NOT_FOUND" << endl;
@@ -439,7 +473,8 @@ int main()
         }
         else if (command == "add_working_hours")
         {
-            int id, day, start, end;
+            int id, day, new_start, new_end;
+            Salary_Report.add_working_hours(id, day, new_start, new_end);
         }
     }
     return 0;
