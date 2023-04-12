@@ -159,23 +159,17 @@ public:
         cout << "Official Working Hours: " << official_working_hours << endl;
         cout << "Tax: " << tax_percentage << "%" << endl;
     }
-    void set_level_config(string _level, int _base_salary,
-                          int _salary_per_hour, int _salary_per_extra_hour,
-                          int _official_working_hours,
-                          int _tax_percentage)
+    void update_level_config(string _level, string _base_salary,
+                             string _salary_per_hour, string _salary_per_extra_hour,
+                             string _official_working_hours,
+                             string _tax_percentage)
     {
-        for (int i = 0; i < salery_configs.size(); i++)
-            if (salery_configs[i]->get_level() == _level)
-            {
-                salery_configs[i]->base_salary = _base_salary;
-                salery_configs[i]->salary_per_hour = _salary_per_hour;
-                salery_configs[i]->salary_per_extra_hour = _salary_per_extra_hour;
-                salery_configs[i]->official_working_hours = _official_working_hours;
-                salery_configs[i]->tax_percentage = _tax_percentage;
-                cout << "OK" << endl;
-                return;
-            }
-        cout << "INVALID_LEVEL" << endl;
+        base_salary = _base_salary == "-" ? base_salary : stoi(_base_salary);
+        salary_per_hour = _salary_per_hour == "-" ? salary_per_hour : stoi(_salary_per_hour);
+        salary_per_extra_hour = _salary_per_extra_hour == "-" ? salary_per_extra_hour : stoi(_salary_per_extra_hour);
+        official_working_hours = _official_working_hours == "-" ? official_working_hours : stoi(_official_working_hours);
+        tax_percentage = _tax_percentage == "-" ? tax_percentage : stoi(_tax_percentage);
+        cout << "OK" << endl;
     }
 
 private:
@@ -324,6 +318,21 @@ public:
             }
         cout << "INVALID_LEVEL" << endl;
     }
+    void update_salary_config(string _level, string _base_salary,
+                              string _salary_per_hour, string _salary_per_extra_hour,
+                              string _official_working_hours,
+                              string _tax_percentage)
+    {
+        for (int i = 0; i < salary_configs.size(); i++)
+            if (salary_configs[i]->get_level() == _level)
+            {
+                salary_configs[i]->update_level_config(_level, _base_salary, _salary_per_hour,
+                                                       _salary_per_extra_hour, _official_working_hours,
+                                                       _tax_percentage);
+                return;
+            }
+        cout << "INVALID_LEVEL" << endl;
+    }
 
 private:
     vector<Employee *> employess = read_employees_file();
@@ -341,13 +350,22 @@ int main()
 {
     Salary_Report Salary_Report;
     string command;
-    while (cin >> command)
+    // while (cin >> command)
+    while (true)
     {
+        cin >> command;
+        string level, base_salary, salary_per_hour, salary_per_extra_hour, official_working_hours, tax_percentage;
+
         if (command == "show_salary_config")
         {
-            string level;
             cin >> level;
             Salary_Report.show_salary_config(level);
+        }
+        else if (command == "update_salary_config")
+        {
+            cin >> level >> base_salary >> salary_per_hour >> salary_per_extra_hour >> official_working_hours >> tax_percentage;
+            Salary_Report.update_salary_config(level, base_salary, salary_per_hour,
+                                               salary_per_extra_hour, official_working_hours, tax_percentage);
         }
     }
     return 0;
