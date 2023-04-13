@@ -236,18 +236,19 @@ public:
             return current_day->get_total_hour();
         }
     }
+
     bool is_employees_work_in_preiod(int start_hour, int end_hour)
     {
-        vector<Working_Interval *> employees_in_preiod;
         for (Day *current_day : attended_days)
         {
-            Working_Interval *emp_in_preiod = current_day->find_emp_in_period(start_hour, end_hour);
-            if (emp_in_preiod != NULL)
+            if (current_day->is_emp_in_period(start_hour, end_hour))
             {
                 return true;
             }
         }
+        return false;
     }
+
     bool is_valid_day(int day) { return (day < 1 || day > 30); }
     int get_emp_id() { return employee_id; }
     vector<Day *> get_attended_days() { return attended_days; }
