@@ -78,16 +78,24 @@ public:
             return true;
         return false;
     }
-
+    bool is_in_range(int new_start_time, int new_end_time) const
+    {
+        return !time_conflict(new_start_time, new_end_time);
+    }
     int get_start_time() { return start_time; }
     int get_end_time() { return end_time; }
     int get_lenght() { return end_time - start_time; }
-
+    void increase_num_workers_by_one()
+    {
+        num_workers++;
+    }
+    int get_num_workers() { return num_workers; }
     bool is_valid_interval(int start, int end) { return (start < 0 || start > 24 || end < 0 || end > 24 || start < end); }
 
 private:
     int start_time;
     int end_time;
+    int num_workers = 0;
 };
 
 class Day
@@ -129,6 +137,18 @@ public:
             total_hour += working_period->get_lenght();
         }
         return total_hour;
+    }
+    Working_Interval *find_emp_in_period(int start_hour, int end_hour)
+    {
+        Working_Interval *emp_in_period = NULL;
+        for (Working_Interval *current_period : working_periods)
+        {
+            if (current_period->is_in_range(start_hour, end_hour))
+            {
+                emp_in_period = new Working_Interval(start_hour, end_hour);
+            }
+        }
+        return emp_in_period;
     }
 
     int get_day() { return day; }
@@ -215,6 +235,18 @@ public:
         else
         {
             return current_day->get_total_hour();
+        }
+    }
+    bool is_employees_work_in_preiod(int start_hour, int end_hour)
+    {
+        vector<Working_Interval *> employees_in_preiod;
+        for (Day *current_day : attended_days)
+        {
+            Working_Interval *emp_in_preiod = current_day->find_emp_in_period(start_hour, end_hour);
+            if (emp_in_preiod != NULL)
+            {
+                return true;
+            }
         }
     }
     bool is_valid_day(int day) { return (day < 1 || day > 30); }
@@ -489,6 +521,35 @@ public:
         }
         return total_durations;
     }
+    void report_employee_per_hour(int start_hour, int end_hour)
+    {
+        if (not_valid_interval(start_hour, end_hour) || not_end_greater(start_hour, end_hour))
+        {
+            cout << "INVALID_ARGUMENTS" << endl;
+            return;
+        }
+        vector<Working_Interval *> new_working_periods;
+        for (int new_hour = start_hour; new_hour + 1 <= end_hour; new_hour++)
+        {
+            Working_Interval *new_period = new Working_Interval(new_hour, new_hour + 1);
+            for (Working_Hour *working_hour : working_hours)
+            {
+                if (working_hour->is_employees_work_in_preiod(new_hour, new_hour + 1))
+                {
+                    new_period->increase_num_workers_by_one();
+                }
+            }
+            new_working_periods.push_back(new_period);
+        }
+        if (!new_working_periods.empty())
+        {
+            print bela bela;
+        }
+        else
+        {
+            cout << "INVALID_ARGUMENTS" << endl;
+        }
+    }
 
 private:
     vector<Employee *> employess = read_employees_file();
@@ -582,6 +643,12 @@ int main()
             int start_day, end_day;
             cin >> start_day >> end_day;
             Salary_Report.report_total_hours_per_day(start_day, end_day);
+        }
+        else if (command == "report_employee_per_hour")
+        {
+            int start_hour, end_hour;
+            cin >> start_hour >> end_hour;
+            Salary_Report.
         }
     }
     return 0;
