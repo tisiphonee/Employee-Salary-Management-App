@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-
+#include <iomanip>
 using namespace std;
 
 void error(string message);
@@ -499,14 +499,16 @@ public:
         vector<int> total_durations = find_durations(start_day, end_day);
         if (!total_durations.empty())
         {
-            print_day_vector(total_durations);
-            print_min_max_preiods(total_durations);
+            print_days_vector(total_durations);
+            cout << "---" << endl;
+            print_days_min_max_preiods(total_durations);
         }
         else
         {
             cout << "INVALID_ARGUMENTS" << endl;
         }
     }
+
     vector<int> find_durations(int start_day, int end_day)
     {
         vector<int> total_durations;
@@ -521,6 +523,7 @@ public:
         }
         return total_durations;
     }
+
     void report_employee_per_hour(int start_hour, int end_hour)
     {
         if (not_valid_interval(start_hour, end_hour) || not_end_greater(start_hour, end_hour))
@@ -543,12 +546,17 @@ public:
         }
         if (!new_working_periods.empty())
         {
-            print bela bela;
+            print_hours_periods(new_working_periods);
+            cout << "---" << endl;
+            print_hours_min_max_preiods(new_working_periods);
         }
         else
         {
             cout << "INVALID_ARGUMENTS" << endl;
         }
+    }
+    void print_hours_min_max_preiods(vector<Working_Interval *> new_working_periods)
+    {
     }
 
 private:
@@ -557,13 +565,12 @@ private:
     vector<Salary_Config *> salary_configs = read_salary_file();
     vector<Working_Hour *> working_hours = read_working_hour_file();
 
-    void print_day_vector(vector<int> v)
+    void print_days_vector(vector<int> v)
     {
         for (int i = 0; i < v.size(); i++)
         {
             cout << "Day #" << i + 1 << ": " << v[i] << endl;
         }
-        cout << "---" << endl;
     }
     void print_all_elements_instances(vector<int> v, int val)
     {
@@ -587,7 +594,7 @@ private:
         return *std::min_element(v.begin(), v.end());
     }
 
-    void print_min_max_preiods(const vector<int> &v)
+    void print_days_min_max_preiods(const vector<int> &v)
     {
         int max_val = max_element(v);
         cout << "Day(s) with Max Working Hours: ";
@@ -596,6 +603,28 @@ private:
         cout << "Day(s) with Min Working Hours: ";
         print_all_elements_instances(v, min_val);
     }
+
+    void print_hours_periods(vector<Working_Interval *> new_working_periods)
+    {
+        for (Working_Interval *working_periods : new_working_periods)
+        {
+            int total_num_emp = employess.size();
+            float average_val = calculate_average(working_periods->get_num_workers(), total_num_emp);
+
+            cout << working_periods->get_start_time() << "-" << working_periods->get_end_time()
+                 << ": " << setprecision(1) << average_val << endl;
+        }
+    }
+    float calculate_average(int sum, int count)
+    {
+        if (sum == 0)
+        {
+            return 0.0;
+        }
+        float average = sum / count;
+        return average;
+    }
+
     bool not_valid_day(int day) { return (day < 1 || day > 30); }
     bool not_end_greater(int start, int end) { return (start > end); }
     bool not_valid_interval(int start, int end) { return (start < 0 || start > 24 || end < 0 || end > 24); }
