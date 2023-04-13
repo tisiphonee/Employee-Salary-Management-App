@@ -120,6 +120,10 @@ public:
     int get_total_hour()
     {
         int total_hour = 0;
+        if (working_periods.empty())
+        {
+            return total_hour;
+        }
         for (Working_Interval *working_period : working_periods)
         {
             total_hour += working_period->get_lenght();
@@ -204,7 +208,11 @@ public:
     int total_hours_per_day(int day)
     {
         Day *current_day = find_day_by_number(day);
-        if (current_day->get_day() == day)
+        if (current_day == NULL)
+        {
+            return 0;
+        }
+        else if (current_day->get_day() == day)
         {
             return current_day->get_total_hour();
         }
@@ -435,7 +443,7 @@ public:
     }
     void add_working_hours(int id, int day, int new_start, int new_end)
     {
-        if (not_valid_day(day) || not_valid_interval(new_start, new_end) || not_start_greater(new_start, new_end))
+        if (not_valid_day(day) || not_valid_interval(new_start, new_end) || not_end_greater(new_start, new_end))
         {
             cout << "INVALID_ARGUMENTS" << endl;
             return;
@@ -452,18 +460,38 @@ public:
     }
     void report_total_hours_per_day(int start_day, int end_day)
     {
+        if (not_valid_day(start_day) || not_valid_day(end_day) || not_end_greater(start_day, end_day))
+        {
+            cout << "INVALID_ARGUMENTS" << endl;
+            return;
+        }
         vector<int> total_durations;
         for (int day = start_day; day <= end_day; day++)
         {
             for (Working_Hour *working_hour : working_hours)
             {
                 int total_hour = working_hour->total_hours_per_day(day);
-                total_durations.push_back(total_hour);
+                if (total_hour != 0)
+                    total_durations.push_back(total_hour);
             }
         }
-        print_day_vector(total_durations);
-        print_min_max_preiods(total_durations);
+        if (!total_durations.empty())
+        {
+            print_day_vector(total_durations);
+            print_min_max_preiods(total_durations);
+        }
+        else
+        {
+            cout << "INVALID_ARGUMENTS" << endl;
+        }
     }
+
+private:
+    vector<Employee *> employess = read_employees_file();
+    vector<Team *> teams = read_teams_file();
+    vector<Salary_Config *> salary_configs = read_salary_file();
+    vector<Working_Hour *> working_hours = read_working_hour_file();
+
     void print_day_vector(vector<int> v)
     {
         for (int i = 0; i < v.size(); i++)
@@ -504,14 +532,8 @@ public:
         print_all_elements_instances(v, min_val);
     }
     bool not_valid_day(int day) { return (day < 1 || day > 30); }
-    bool not_start_greater(int start, int end) { return (start > end); }
+    bool not_end_greater(int start, int end) { return (start > end); }
     bool not_valid_interval(int start, int end) { return (start < 0 || start > 24 || end < 0 || end > 24); }
-
-private:
-    vector<Employee *> employess = read_employees_file();
-    vector<Team *> teams = read_teams_file();
-    vector<Salary_Config *> salary_configs = read_salary_file();
-    vector<Working_Hour *> working_hours = read_working_hour_file();
 };
 void error(string message)
 {
@@ -553,8 +575,9 @@ int main()
         }
         else if (command == "report_total_hours_per_day")
         {
-            int start, end;
-            cin >> start >> end;
+            int start_day, end_day;
+            cin >> start_day >> end_day;
+            Salary_Report.report_total_hours_per_day(start_day, end_day);
         }
     }
     return 0;
