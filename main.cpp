@@ -8,7 +8,7 @@
 using namespace std;
 
 void error(string message);
-
+const int DAY_IN_MONTH = 30;
 class Team
 {
 public:
@@ -234,14 +234,12 @@ public:
         }
     }
 
-    bool is_employees_work_in_preiod(int start_hour, int end_hour)
+    bool is_employees_work_in_preiod(int start_hour, int end_hour, int day)
     {
-        for (Day *current_day : attended_days)
+        Day *current_day = find_day_by_number(day);
+        if (current_day->is_emp_in_period(start_hour, end_hour))
         {
-            if (current_day->is_emp_in_period(start_hour, end_hour))
-            {
-                return true;
-            }
+            return true;
         }
         return false;
     }
@@ -532,11 +530,14 @@ public:
         for (int new_hour = start_hour; new_hour + 1 <= end_hour; new_hour++)
         {
             Working_Interval *new_period = new Working_Interval(new_hour, new_hour + 1);
-            for (Working_Hour *working_hour : working_hours)
+            for (int day_index = 1; day_index <= DAY_IN_MONTH; day_index++)
             {
-                if (working_hour->is_employees_work_in_preiod(new_hour, new_hour + 1))
+                for (Working_Hour *working_hour : working_hours)
                 {
-                    new_period->increase_num_workers_by_one();
+                    if (working_hour->is_employees_work_in_preiod(new_hour, new_hour + 1, day_index))
+                    {
+                        new_period->increase_num_workers_by_one();
+                    }
                 }
             }
             new_working_periods.push_back(new_period);
@@ -608,20 +609,20 @@ private:
         for (Working_Interval *working_period : new_working_periods)
         {
             int total_num_emp = employess.size();
-            float average_val = calculate_average(working_period->get_num_workers(), total_num_emp);
+            float average_val = calculate_average(working_period->get_num_workers());
 
             cout << working_period->get_start_time() << "-" << working_period->get_end_time()
                  << ": " << setprecision(1) << average_val << endl;
         }
     }
 
-    double calculate_average(int sum, int count)
+    double calculate_average(int sum)
     {
         if (sum == 0)
         {
             return 0.0;
         }
-        double average = sum / count;
+        double average = sum / 30.0;
         return average;
     }
 
