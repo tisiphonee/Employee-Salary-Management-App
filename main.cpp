@@ -70,7 +70,7 @@ public:
         }
     }
 
-    bool time_conflict(int new_start_time, int new_end_time) const
+    bool is_in_range(int new_start_time, int new_end_time) const
     {
         if (new_start_time >= start_time && new_start_time < end_time)
             return true;
@@ -78,10 +78,7 @@ public:
             return true;
         return false;
     }
-    bool is_in_range(int new_start_time, int new_end_time) const
-    {
-        return !time_conflict(new_start_time, new_end_time);
-    }
+
     int get_start_time() { return start_time; }
     int get_end_time() { return end_time; }
     int get_lenght() { return end_time - start_time; }
@@ -114,7 +111,7 @@ public:
     {
         for (Working_Interval *current_period : working_periods)
         {
-            bool time_conflict = current_period->time_conflict(new_start, new_end);
+            bool time_conflict = current_period->is_in_range(new_start, new_end);
             if (time_conflict)
             {
                 cout << "INVALID_INTERVAL" << endl;
@@ -549,14 +546,16 @@ public:
             print_hours_periods(new_working_periods);
             cout << "---" << endl;
             print_hours_min_max_preiods(new_working_periods);
+
+            for (auto it = new_working_periods.begin(); it != new_working_periods.end(); ++it)
+            {
+                delete *it;
+            }
         }
         else
         {
             cout << "INVALID_ARGUMENTS" << endl;
         }
-    }
-    void print_hours_min_max_preiods(vector<Working_Interval *> new_working_periods)
-    {
     }
 
 private:
@@ -615,6 +614,7 @@ private:
                  << ": " << setprecision(1) << average_val << endl;
         }
     }
+
     float calculate_average(int sum, int count)
     {
         if (sum == 0)
@@ -623,6 +623,61 @@ private:
         }
         float average = sum / count;
         return average;
+    }
+
+    void print_hours_min_max_preiods(vector<Working_Interval *> new_working_periods)
+    {
+        vector<Working_Interval *> max_elements = find_max_interval_elements(new_working_periods);
+        cout << "Period(s) with Max Working Employees: ";
+        print_workers_periods(max_elements);
+        vector<Working_Interval *> min_elements = find_min_interval_elements(new_working_periods);
+        cout << "Period(s) with Min Working Employees: ";
+        print_workers_periods(min_elements);
+    }
+
+    vector<Working_Interval *> find_max_interval_elements(vector<Working_Interval *> intervals)
+    {
+        auto max_it = std::max_element(intervals.begin(), intervals.end(),
+                                       [](Working_Interval *a, Working_Interval *b)
+                                       { return a->get_num_workers() < b->get_num_workers(); });
+
+        vector<Working_Interval *> max_elements;
+        for (auto it = intervals.begin(); it != intervals.end(); ++it)
+        {
+            if ((*it)->get_num_workers() == (*max_it)->get_num_workers())
+            {
+                max_elements.push_back(*it);
+            }
+        }
+
+        return max_elements;
+    }
+
+    vector<Working_Interval *> find_min_interval_elements(vector<Working_Interval *> intervals)
+    {
+        auto min_it = std::min_element(intervals.begin(), intervals.end(),
+                                       [](Working_Interval *a, Working_Interval *b)
+                                       { return a->get_num_workers() < b->get_num_workers(); });
+
+        vector<Working_Interval *> min_elements;
+        for (auto it = intervals.begin(); it != intervals.end(); ++it)
+        {
+            if ((*it)->get_num_workers() == (*min_it)->get_num_workers())
+            {
+                min_elements.push_back(*it);
+            }
+        }
+
+        return min_elements;
+    }
+
+    void print_workers_periods(vector<Working_Interval *> intervals)
+    {
+        for (auto it = intervals.begin(); it != intervals.end(); ++it)
+        {
+            cout << (*it)->get_start_time() << "-" << (*it)->get_end_time() << " ";
+        }
+        cout << endl;
     }
 
     bool not_valid_day(int day) { return (day < 1 || day > 30); }
@@ -677,7 +732,7 @@ int main()
         {
             int start_hour, end_hour;
             cin >> start_hour >> end_hour;
-            Salary_Report.
+            Salary_Report.report_employee_per_hour(start_hour, end_hour);
         }
     }
     return 0;
