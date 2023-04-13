@@ -201,7 +201,7 @@ public:
         }
         return NULL;
     }
-    int report_total_hours_per_day(int day)
+    int total_hours_per_day(int day)
     {
         Day *current_day = find_day_by_number(day);
         if (current_day->get_day() == day)
@@ -452,14 +452,56 @@ public:
     }
     void report_total_hours_per_day(int start_day, int end_day)
     {
-        vector<int> total_duration;
+        vector<int> total_durations;
         for (int day = start_day; day <= end_day; day++)
         {
             for (Working_Hour *working_hour : working_hours)
             {
-                working_hour->report_total_hours_per_day(day);
+                int total_hour = working_hour->total_hours_per_day(day);
+                total_durations.push_back(total_hour);
             }
         }
+        print_day_vector(total_durations);
+        print_min_max_preiods(total_durations);
+    }
+    void print_day_vector(vector<int> v)
+    {
+        for (int i = 0; i < v.size(); i++)
+        {
+            cout << "Day #" << i << ": " << v[i] << endl;
+        }
+        cout << "---" << endl;
+    }
+    void print_all_elements_instances(vector<int> v, int val)
+    {
+        for (int it = *v.begin(); it != *v.end(); ++it)
+        {
+            if (it == val)
+            {
+                cout << it << " ";
+            }
+        }
+        cout << "\n";
+    }
+
+    int max_element(const vector<int> &v)
+    {
+        return *std::max_element(v.begin(), v.end());
+    }
+
+    int min_element(const vector<int> &v)
+    {
+        return *std::min_element(v.begin(), v.end());
+    }
+
+    void print_min_max_preiods(const vector<int> &v)
+    {
+        int max_val = max_element(v);
+        cout << "Day(s) with Max Working Hours: ";
+        print_all_elements_instances(v, max_val);
+        int min_val = max_element(v);
+        cout << "Day(s) with Min Working Hours: ";
+        print_all_elements_instances(v, min_val);
     }
     bool not_valid_day(int day) { return (day < 1 || day > 30); }
     bool not_start_greater(int start, int end) { return (start > end); }
