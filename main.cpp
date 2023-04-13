@@ -138,17 +138,16 @@ public:
         }
         return total_hour;
     }
-    Working_Interval *find_emp_in_period(int start_hour, int end_hour)
+    bool is_emp_in_period(int start_hour, int end_hour)
     {
-        Working_Interval *emp_in_period = NULL;
         for (Working_Interval *current_period : working_periods)
         {
             if (current_period->is_in_range(start_hour, end_hour))
             {
-                emp_in_period = new Working_Interval(start_hour, end_hour);
+                return true;
             }
         }
-        return emp_in_period;
+        return false;
     }
 
     int get_day() { return day; }
