@@ -237,9 +237,12 @@ public:
     bool is_employees_work_in_preiod(int start_hour, int end_hour, int day)
     {
         Day *current_day = find_day_by_number(day);
-        if (current_day->is_emp_in_period(start_hour, end_hour))
+        if (current_day != NULL)
         {
-            return true;
+            if (current_day->is_emp_in_period(start_hour, end_hour))
+            {
+                return true;
+            }
         }
         return false;
     }
