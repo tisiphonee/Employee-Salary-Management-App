@@ -3,6 +3,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -116,6 +117,16 @@ public:
         cout << "OK" << endl;
     }
 
+    int get_total_hour()
+    {
+        int total_hour = 0;
+        for (Working_Interval *working_period : working_periods)
+        {
+            total_hour += working_period->get_lenght();
+        }
+        return total_hour;
+    }
+
     int get_day() { return day; }
 
 private:
@@ -190,7 +201,15 @@ public:
         }
         return NULL;
     }
-
+    int report_total_hours_per_day(int day)
+    {
+        Day *current_day = find_day_by_number(day);
+        if (current_day->get_day() == day)
+        {
+            return current_day->get_total_hour();
+        }
+        return 0;
+    }
     bool is_valid_day(int day) { return (day < 1 || day > 30); }
     int get_emp_id() { return employee_id; }
     vector<Day *> get_attended_days() { return attended_days; }
@@ -416,7 +435,7 @@ public:
     }
     void add_working_hours(int id, int day, int new_start, int new_end)
     {
-        if (not_valid_day(day) || not_valid_interval(new_start, new_end))
+        if (not_valid_day(day) || not_valid_interval(new_start, new_end) || not_start_greater(new_start, new_end))
         {
             cout << "INVALID_ARGUMENTS" << endl;
             return;
@@ -431,9 +450,20 @@ public:
         }
         cout << "EMPLOYEE_NOT_FOUND" << endl;
     }
-
+    void report_total_hours_per_day(int start_day, int end_day)
+    {
+        vector<int> total_duration;
+        for (int day = start_day; day <= end_day; day++)
+        {
+            for (Working_Hour *working_hour : working_hours)
+            {
+                working_hour->report_total_hours_per_day(day);
+            }
+        }
+    }
     bool not_valid_day(int day) { return (day < 1 || day > 30); }
-    bool not_valid_interval(int start, int end) { return (start < 0 || start > 24 || end < 0 || end > 24 || start > end); }
+    bool not_start_greater(int start, int end) { return (start > end); }
+    bool not_valid_interval(int start, int end) { return (start < 0 || start > 24 || end < 0 || end > 24); }
 
 private:
     vector<Employee *> employess = read_employees_file();
@@ -478,6 +508,11 @@ int main()
             int id, day, new_start, new_end;
             cin >> id >> day >> new_start >> new_end;
             Salary_Report.add_working_hours(id, day, new_start, new_end);
+        }
+        else if (command == "report_total_hours_per_day")
+        {
+            int start, end;
+            cin >> start >> end;
         }
     }
     return 0;
