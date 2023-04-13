@@ -212,11 +212,10 @@ public:
         {
             return 0;
         }
-        else if (current_day->get_day() == day)
+        else
         {
             return current_day->get_total_hour();
         }
-        return 0;
     }
     bool is_valid_day(int day) { return (day < 1 || day > 30); }
     int get_emp_id() { return employee_id; }
@@ -465,6 +464,19 @@ public:
             cout << "INVALID_ARGUMENTS" << endl;
             return;
         }
+        vector<int> total_durations = find_durations(start_day, end_day);
+        if (!total_durations.empty())
+        {
+            print_day_vector(total_durations);
+            print_min_max_preiods(total_durations);
+        }
+        else
+        {
+            cout << "INVALID_ARGUMENTS" << endl;
+        }
+    }
+    vector<int> find_durations(int start_day, int end_day)
+    {
         vector<int> total_durations;
         for (int day = start_day; day <= end_day; day++)
         {
@@ -475,15 +487,7 @@ public:
                     total_durations.push_back(total_hour);
             }
         }
-        if (!total_durations.empty())
-        {
-            print_day_vector(total_durations);
-            print_min_max_preiods(total_durations);
-        }
-        else
-        {
-            cout << "INVALID_ARGUMENTS" << endl;
-        }
+        return total_durations;
     }
 
 private:
@@ -496,17 +500,17 @@ private:
     {
         for (int i = 0; i < v.size(); i++)
         {
-            cout << "Day #" << i << ": " << v[i] << endl;
+            cout << "Day #" << i + 1 << ": " << v[i] << endl;
         }
         cout << "---" << endl;
     }
     void print_all_elements_instances(vector<int> v, int val)
     {
-        for (int it = *v.begin(); it != *v.end(); ++it)
+        for (auto it = v.begin(); it != v.end(); ++it)
         {
-            if (it == val)
+            if (*it == val)
             {
-                cout << it << " ";
+                cout << *it << " ";
             }
         }
         cout << "\n";
