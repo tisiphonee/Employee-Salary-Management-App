@@ -605,23 +605,23 @@ private:
 
     void print_hours_periods(vector<Working_Interval *> new_working_periods)
     {
-        for (Working_Interval *working_periods : new_working_periods)
+        for (Working_Interval *working_period : new_working_periods)
         {
             int total_num_emp = employess.size();
-            float average_val = calculate_average(working_periods->get_num_workers(), total_num_emp);
+            float average_val = calculate_average(working_period->get_num_workers(), total_num_emp);
 
-            cout << working_periods->get_start_time() << "-" << working_periods->get_end_time()
+            cout << working_period->get_start_time() << "-" << working_period->get_end_time()
                  << ": " << setprecision(1) << average_val << endl;
         }
     }
 
-    float calculate_average(int sum, int count)
+    double calculate_average(int sum, int count)
     {
         if (sum == 0)
         {
             return 0.0;
         }
-        float average = sum / count;
+        double average = sum / count;
         return average;
     }
 
