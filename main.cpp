@@ -844,6 +844,7 @@ private:
     bool not_end_greater(int start, int end) { return (start > end); }
     bool not_valid_interval(int start, int end) { return (start < 0 || start > 24 || end < 0 || end > 24); }
 };
+
 void error(string message)
 {
     cerr << message << endl;
