@@ -203,7 +203,7 @@ public:
         return false;
     }
 
-    bool is_valid_day(int day) { return (day < 1 || day > 30); }
+    bool is_valid_day(int day) { return (day < 1 || day > DAY_IN_MONTH); }
 
     int emp_total_hours()
     {
@@ -947,7 +947,7 @@ private:
         return t1->get_team_totoal_working_hour(working_hours) < t2->get_team_totoal_working_hour(working_hours);
     }
     bool precentage_is_valid(int bonus_precentage) { return (bonus_precentage < 0 || bonus_precentage > 100); }
-    bool not_valid_day(int day) { return (day < 1 || day > 30); }
+    bool not_valid_day(int day) { return (day < 1 || day > DAY_IN_MONTH); }
     bool not_end_greater(int start, int end) { return (start > end); }
     bool not_valid_interval(int start, int end) { return (start < 0 || start > 24 || end < 0 || end > 24); }
 };
