@@ -283,7 +283,7 @@ public:
         }
         return total_working_hours;
     }
-    float get_team_variance(vector<Working_Hour *> working_hours, double avg_working_hours)
+    float get_team_variance(vector<Working_Hour *> working_hours, float avg_working_hours)
     {
         float variance = 0;
         for (auto member_id : member_ids)
@@ -923,7 +923,7 @@ private:
         {
             double total_working_hours = team->get_team_totoal_working_hour(working_hours);
 
-            double avg_working_hours = total_working_hours / team->get_member_ids().size();
+            float avg_working_hours = total_working_hours / team->get_member_ids().size();
             float team_variance = team->get_team_variance(working_hours, avg_working_hours);
 
             if (team_variance < team->get_bonus_working_hours_max_variancse() &&
