@@ -9,7 +9,7 @@ using namespace std;
 
 void error(string message);
 const double DAY_IN_MONTH = 30.0;
-
+const int NOT_IN_TEAM = -1;
 class Working_Interval
 {
 public:
@@ -222,12 +222,130 @@ private:
     int employee_id;
     vector<Day *> attended_days;
 };
+
+class Working_Hour
+{
+public:
+    Working_Hour(int id, int day, Working_Interval *working_period)
+    {
+        if (is_valid_day(day))
+        {
+            error("Invalid day: " + to_string(day) + "\n");
+        }
+        else
+        {
+            employee_id = id;
+            add_new_time(day, working_period);
+        }
+    }
+    void add_new_time(int day, Working_Interval *working_period)
+    {
+        bool is_exsist_day = false;
+        for (int i = 0; i < attended_days.size(); i++)
+            if (attended_days[i]->get_day() == day)
+            {
+                attended_days[i]->add_work_period(working_period);
+                is_exsist_day = true;
+            }
+        if (!is_exsist_day)
+        {
+            attended_days.push_back(new Day(day, working_period));
+        }
+    }
+
+    void delete_day(int day)
+    {
+        for (int i = 0; i < attended_days.size(); i++)
+        {
+            if (attended_days[i]->get_day() == day)
+            {
+                attended_days.erase(attended_days.begin() + i);
+                cout << "OK" << endl;
+                return;
+            }
+        }
+        cout << "INVALID_ARGUMENTS" << endl;
+    }
+
+    void insert_new_time(int day_index, int new_start, int new_end)
+    {
+        Day *current_day = find_day_by_number(day_index);
+        if (current_day != NULL)
+        {
+            current_day->insert_periods(new_start, new_end);
+        }
+        else
+        {
+            attended_days.push_back(new Day(day_index, new Working_Interval(new_start, new_end)));
+            cout << "OK" << endl;
+        }
+    }
+
+    Day *find_day_by_number(int day)
+    {
+        for (Day *current_day : attended_days)
+        {
+            if (current_day->get_day() == day)
+                return current_day;
+        }
+        return NULL;
+    }
+    int total_hours_per_day(int day)
+    {
+        Day *current_day = find_day_by_number(day);
+        if (current_day == NULL)
+        {
+            return 0;
+        }
+        else
+        {
+            return current_day->get_total_hour();
+        }
+    }
+
+    bool is_employees_work_in_preiod(int start_hour, int end_hour, int day)
+    {
+        Day *current_day = find_day_by_number(day);
+        if (current_day != NULL)
+        {
+            if (current_day->is_emp_in_period(start_hour, end_hour))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool is_valid_day(int day) { return (day < 1 || day > DAY_IN_MONTH); }
+
+    int emp_total_hours()
+    {
+        int total_hour = 0;
+        for (Day *current_day : attended_days)
+        {
+            total_hour += current_day->get_total_hour();
+        }
+        return total_hour;
+    }
+
+    int get_emp_id() { return employee_id; }
+    vector<Day *> get_attended_days() { return attended_days; }
+
+private:
+    int employee_id;
+    vector<Day *> attended_days;
+};
 class Employee
 {
 public:
     Employee(int id, string name, int age, string level)
         : id(id), name(name), age(age), level(level) {}
 
+    void print_member_of_team_information()
+    {
+        cout << "---" << endl;
+        cout << "MEMBER ID: " << get_id() << endl;
+    }
     int get_id() const { return id; }
     string get_name() const { return name; }
     int get_age() const { return age; }
@@ -249,8 +367,26 @@ public:
          int bonus_min_working_hours,
          float bonus_working_hours_max_variance) : team_id(team_id), team_head_id(team_head_id),
                                                    member_ids(member_ids), bonus_min_working_hours(bonus_min_working_hours),
-                                                   bonus_working_hours_max_variance(bonus_working_hours_max_variance)
+                                                   bonus_working_hours_max_variance(bonus_working_hours_max_variance) {}
+
+    float find_avg_member_working_hour(vector<Working_Hour *> working_hours)
     {
+        int team_total_working_hour;
+        int member_number;
+        member_number = member_ids.size();
+        team_total_working_hour = get_team_totoal_working_hour(working_hours);
+        return (team_total_working_hour / member_number);
+    }
+
+    string find_empolyee_name(vector<Employee *> employess, int employee_id)
+    {
+        for (Employee *employee : employess)
+        {
+            if (employee_id == employee->get_id())
+            {
+                return employee->get_name();
+            }
+        }
     }
 
     void update_bonus_of_team(int new_bonus_precentage)
@@ -557,6 +693,30 @@ public:
         cout << "INVALID_ARGUMANTS" << endl;
     }
 
+    void report_salaries()
+    {
+        for (Working_Hour *working_hour : working_hours)
+        {
+            for (Employee *employee : employess)
+            {
+                if (working_hour->get_emp_id() == employee->get_id())
+                {
+                    string level;
+                    int salary, bonus, tax;
+                    level = employee->get_level();
+                    salary = calculating_salary_of_employee(level, employee->get_id());
+                    tax = calculating_tax(salary, bonus, tax, level);
+                    bonus = calculating_bonus(teams, employee->get_id());
+                    cout << "ID: " << employee->get_id() << endl;
+                    cout << "Name: " << employee->get_name() << endl;
+                    cout << "Total Working Hours: " << calculating_total_working_hours(employee->get_id()) << endl;
+                    cout << "Total Earning: " << calculating_total_earnings(tax, salary, bonus) << endl;
+                    cout << "---" << endl;
+                }
+            }
+        }
+    }
+
     void add_working_hours(int id, int day, int new_start, int new_end)
     {
         if (not_valid_day(day) || not_valid_interval(new_start, new_end) || not_end_greater(new_start, new_end))
@@ -664,13 +824,58 @@ public:
                 toltal_working_hours = calculating_total_working_hours(employee_id);
                 absent_days = calulating_number_of_absent_days(employee_id);
                 salary = calculating_salary_of_employee(level, employee_id);
-                bonus = calculating_bonus();
+                bonus = calculating_bonus(teams, employee_id);
                 tax = calculating_tax(salary, bonus, tax, level);
                 total_earning = calculating_total_earnings(tax, salary, bonus);
+                cout << "ID: " << id << endl;
+                cout << "Name: " << name << endl;
+                cout << "Age: " << age << endl;
+                cout << "Level: " << level << endl;
+                if (team_id == NOT_IN_TEAM)
+                {
+                    cout << "Team ID: "
+                         << "N/A" << endl;
+                }
+                else
+                {
+                    cout << "Team ID: " << team_id << endl;
+                }
+                cout << "Total Working Hours: " << toltal_working_hours << endl;
+                cout << "Absent Days: " << absent_days << endl;
+                cout << "Salary: " << salary << endl;
+                cout << "Bonus: " << bonus << endl;
+                cout << "Tax: " << tax << endl;
+                cout << "Total Earning: " << total_earning << endl;
+
                 return;
             }
         }
         cout << "EMPLOYEE_NOT_FOUND" << endl;
+    }
+
+    void report_team_salary(int team_id)
+    {
+        for (Team *team : teams)
+        {
+            if (team->get_team_id() == team_id)
+            {
+                cout << "ID: " << team_id << endl;
+                cout << "Head ID: " << team->get_team_head_id() << endl;
+                cout << "Head Name: " << team->find_empolyee_name(employess, team->get_team_id()) << endl;
+                cout << "Team Total Working Hours: " << team->get_team_totoal_working_hour(working_hours) << endl;
+                cout << "Average Member Working Hour: " << team->find_avg_member_working_hour(working_hours) << endl;
+                cout << "Bonus: " << team->get_bonus_min_working_hours() << endl;
+                for (Employee *emplyee : employess)
+                {
+                    for (int team_employee_id : team->get_member_ids())
+                    {
+                        emplyee->print_member_of_team_information();
+                    }
+                }
+                return;
+            }
+        }
+        cout << "TEAM_NOT_FOUND" << endl;
     }
 
     int calculating_total_earnings(int tax, int salary, int bonus)
@@ -683,8 +888,19 @@ public:
         tax = ((salary + bonus) * (tax_precentage / 100));
         return tax;
     }
-    int calculating_bonus()
+    int calculating_bonus(vector<Team *> teams, int employee_id)
     {
+        for (Team *team : teams)
+        {
+            for (int finded_id : team->get_member_ids())
+            {
+                if (finded_id == employee_id || team->get_team_head_id() == employee_id)
+                {
+                    return team->get_bonus_min_working_hours();
+                }
+            }
+        }
+        return 0;
     }
 
     int calculating_salary_of_employee(string level, int employee_id)
@@ -709,6 +925,7 @@ public:
             }
         }
     }
+
     bool does_have_extra_hour(int employee_id, string level, int official_working_hours)
     {
         int total_working_hours;
@@ -729,6 +946,7 @@ public:
                 return (DAY_IN_MONTH - working_hour->get_attended_days().size());
             }
         }
+        return 0;
     }
 
     int calculating_total_working_hours(int employee_id)
@@ -770,7 +988,7 @@ public:
                 }
             }
         }
-        return -1;
+        return NOT_IN_TEAM;
     }
 
     void report_teams_for_bonus()
@@ -1017,6 +1235,16 @@ int main()
         else if (command == "find_teams_for_bonus")
         {
             Salary_Report.report_teams_for_bonus();
+        }
+        else if (command == "report_team_salary")
+        {
+            int team_id;
+            cin >> team_id;
+            Salary_Report.report_team_salary(team_id);
+        }
+        else if (command == "report_salaries")
+        {
+            Salary_Report.report_salaries();
         }
     }
     return 0;
