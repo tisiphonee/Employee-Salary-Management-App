@@ -71,22 +71,39 @@ report_total_hours_per_day 8 13
 
 - Employee Salary Report
   ```
-  ID: 1
-  Name: JohnDoe
-  Total Working Hours: 200
-  Total Earning: 21250
+    ID: 1
+    Name: JohnSmith
+    Total Working Hours: 105
+    Total Earning: 17479
+    ---
+    ID: 2
+    Name: JaneDoe
+    Total Working Hours: 100
+    Total Earning: 42000
+    ---
+    ...
   ```
 - Team Salary Report
   ```
-  Team ID: 1
-  Head ID: 2
-  Head Name: JaneDoe
-  Team Total Working Hours: 443
-  Average Member Working Hours: 221.5
-  Bonus: 15
+    ID: 1
+    Head ID: 2
+    Head Name: JaneDoe
+    Team Total Working Hours: 422
+    Average Member Working Hours: 140.7
+    Bonus: 0
+    ---
+    Member ID: 2
+    Total Earning: 42000
+    ---
+    Member ID: 4
+    Total Earning: 37306
+    ---
+    Member ID: 7
+    Total Earning: 23327
+    ---
   ```
 
-(Note: The actual application will provide detailed output based on the commands executed.)
+Note: The actual application will provide detailed output based on the commands executed.
 
 ## License
 This project is licensed under the MIT License.
