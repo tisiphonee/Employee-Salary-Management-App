@@ -3,6 +3,14 @@
 ## Overview
 The Employee Salary Management system is a C++ application designed to manage employee salaries using their personal data, team assignments, and working hours. The system takes input from CSV files and provides a command-line interface for various salary-related operations.
 
+
+
+## Class Inheritance Diagram
+
+<img src="inheritance.png" alt="Class Inheritance Diagram" width="400" height="400"/>
+
+The diagram above illustrates the class inheritance structure used in the Salary Management System. 
+
 ## Features
 - Load employee, team, and working hour data from CSV files.
 - Show and update salary configurations.
