@@ -113,9 +113,6 @@ report_total_hours_per_day 8 13
 
 Note: The actual application will provide detailed output based on the commands executed.
 
-## License
-This project is licensed under the MIT License.
-
 ## Acknowledgements
 
 - Special thanks to [Saman Tousi](https://github.com/Saman2C) for their collaboration on our college coursework.
